@@ -37,7 +37,7 @@ async def hw_loop():
     while True:
         await asyncio.sleep(1)
 
-# Load the pre-trained Haar Cascade classifier for face detection
+# Load the pre-trained Haar Cascade classifier for face detection                     
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
 WIDTH = 1200
@@ -62,14 +62,19 @@ picam2.set_controls({"AfMode": controls.AfModeEnum.Continuous, "AfSpeed": contro
 # layout
 layout = [
     [
-        sg.Button("Save"),
+        sg.Button("Save", key="-save-"),
         sg.Text("／Date："),
-        sg.InputText("2024/09/01"),
+        sg.InputText("2024/09/01", size=(10, 1), key="-date-"),
         sg.Text("／Position："),
-        sg.InputText("hara"),
+        sg.InputText("hara", size=(10, 1), key="-pos-"),
+        sg.Text("／品種："),
+        sg.Combo(["コシヒカリ", "ひゃくまん穀", "ゆめみづほ","能登ひかり"], default_value="コシヒカリ", size=(15, 1), key="-kind-", enable_events=True),
+        sg.Text("／pos_cnt："),
+        sg.InputText("01", size=(5, 1), key="-pos_cnt-"),
+        sg.Text("／pic_cnt："),
+        sg.InputText("001", size=(5, 1), key="-pic_cnt-"),
         sg.VSeparator(),
-        # sg.VSeparator(pad=1),
-        sg.Button("Exit"),
+        sg.Button("Exit", key="-exit-"),
     ],
     [sg.Image(key="-image-", size=(WIDTH, HEIGHT))],
 ]
@@ -79,11 +84,11 @@ async def gui_loop():
     try:
         # event loop
         print("Window start")
-        window = sg.Window("Camera Test", layout)
+        window = sg.Window("Genmai Capture", layout)
         while True:
             event, values = window.read(timeout=100)
             print('#', event, values)
-            if event in (sg.WIN_CLOSED, "Exit"):
+            if event in (sg.WIN_CLOSED, "-exit-"):
                 sg.popup("[1] popup")
                 break
 
@@ -99,12 +104,26 @@ async def gui_loop():
             for (x, y, w, h) in faces:
                 cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)
 
-
             frame = cv2.resize(frame, (WIDTH, HEIGHT), fx=0, fy=0)
             img = cv2.imencode(".png", frame)[1].tobytes()
 
             window["-image-"].update(img)
 
+            if event == "-save-":
+                str_file = ""
+                str_date = values["-date-"].replace("/", "")
+                str_pos = values["-pos-"]
+                str_kind = values["-kind-"]
+                str_pos_cnt = values["-pos_cnt-"]
+                str_pic_cnt = values["-pic_cnt-"]
+                str_file = str_date + "_" + str_pos + "_" + str_kind + "_" + str_pos_cnt + "_" + str_pic_cnt + ".jpg"
+                # cv2.imwrite("./_capture/capture.jpg", picam2.capture_array())
+                sg.popup(str_file)
+
+                num_pic_cnt = int(str_pic_cnt)
+                num_pic_cnt += 1
+                str_pic_cnt = str(num_pic_cnt).zfill(3)
+                window["-pic_cnt-"].update(text=str_pic_cnt)
 
     finally:
         # Release resources
@@ -116,5 +135,6 @@ async def gui_loop():
 async def main():
     await asyncio.gather(hw_loop(), gui_loop())
 
-asyncio.run(main())
+asyncio.run(gui_loop())
+# asyncio.run(main())
 
