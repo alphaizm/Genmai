@@ -89,22 +89,23 @@ async def gui_loop():
             event, values = window.read(timeout=100)
             print('#', event, values)
             if event in (sg.WIN_CLOSED, "-exit-"):
-                sg.popup("[1] popup")
                 break
 
-            frame = picam2.capture_array()
+            frame_raw = picam2.capture_array()
+            frame_rev = cv2.flip(frame_raw, -1)  # Flip the frame horizontally
+            frame_disp = frame_rev.copy()  # Create a copy of the flipped frame
 
             # Convert the image to grayscale for face detection
-            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            frame_gray = cv2.cvtColor(frame_disp, cv2.COLOR_BGR2GRAY)
 
             # Perform face detection
-            faces = face_cascade.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5, minSize=(30, 30))
+            faces = face_cascade.detectMultiScale(frame_gray, scaleFactor=1.3, minNeighbors=5, minSize=(30, 30))
 
             # Draw rectangles around the detected faces
             for (x, y, w, h) in faces:
-                cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)
+                cv2.rectangle(frame_disp, (x, y), (x+w, y+h), (255, 0, 0), 2)
 
-            frame = cv2.resize(frame, (WIDTH, HEIGHT), fx=0, fy=0)
+            frame = cv2.resize(frame_disp, (WIDTH, HEIGHT), fx=0, fy=0)
             img = cv2.imencode(".png", frame)[1].tobytes()
 
             window["-image-"].update(img)
@@ -117,7 +118,8 @@ async def gui_loop():
                 str_pos_cnt = values["-pos_cnt-"]
                 str_pic_cnt = values["-pic_cnt-"]
                 str_file = str_date + "_" + str_pos + "_" + str_kind + "_" + str_pos_cnt + "_" + str_pic_cnt + ".jpg"
-                # cv2.imwrite("./_capture/capture.jpg", picam2.capture_array())
+                cv2.imwrite(os.path.join(r'./_capture', str_file), frame_rev)
+                # cv2.imwrite(os.path.join(r'./_capture', str_file), picam2.capture_array())
                 sg.popup(str_file)
 
                 num_pic_cnt = int(str_pic_cnt)
