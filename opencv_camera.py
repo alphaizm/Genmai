@@ -7,6 +7,7 @@ pip install opencv-contrib-python
 ```
 """
 
+from typing import Any
 import cv2
 from picamera2 import Picamera2
 from libcamera import controls
@@ -56,7 +57,8 @@ picam2.preview_configuration.align()
 picam2.configure("preview")
 picam2.start()
 
-#カメラを連続オートフォーカスモードにする
+# カメラを連続オートフォーカスモードにする
+# picam2.set_controls({"AfMode": controls.AfModeEnum.Manual, "LensPosition": 4.4})
 picam2.set_controls({"AfMode": controls.AfModeEnum.Continuous, "AfSpeed": controls.AfSpeedEnum.Fast})
 
 # layout
@@ -64,11 +66,25 @@ layout = [
     [
         sg.Button("Save", key="-save-"),
         sg.Text("／Date："),
-        sg.InputText("2024/09/01", size=(10, 1), key="-date-"),
-        sg.Text("／Position："),
+        sg.InputText("2024-09-01", size=(10, 1), key="-date-"),
+        sg.CalendarButton("...", 
+                          title="撮影日",
+                          date_format="%Y-%m-%d",
+                          target_key="-date-"
+                          ),
+        sg.Text("／圃場："),
         sg.InputText("hara", size=(10, 1), key="-pos-"),
         sg.Text("／品種："),
-        sg.Combo(["コシヒカリ", "ひゃくまん穀", "ゆめみづほ","能登ひかり"], default_value="コシヒカリ", size=(15, 1), key="-kind-", enable_events=True),
+        sg.Combo([
+                    "コシヒカリ",
+                    "ひゃくまん穀",
+                    "ゆめみづほ",
+                    "能登ひかり"
+                 ], 
+                 default_value="コシヒカリ",
+                 size=(15, 1),
+                 key="-kind-", 
+                 enable_events=True),
         sg.Text("／pos_cnt："),
         sg.InputText("01", size=(5, 1), key="-pos_cnt-"),
         sg.Text("／pic_cnt："),
@@ -76,8 +92,35 @@ layout = [
         sg.VSeparator(),
         sg.Button("Exit", key="-exit-"),
     ],
-    [sg.Image(key="-image-", size=(WIDTH, HEIGHT))],
+    [   sg.Image(key="-image-", size=(WIDTH, HEIGHT))   ],
 ]
+
+def evt_save(window_: dict[str, Any], values_: dict[str, Any], img_:Any):
+    # 保存処理のコードをここに記述
+    str_file = ""
+    str_date = values_["-date-"]
+    str_pos = values_["-pos-"]
+    str_kind = values_["-kind-"]
+    str_pos_cnt = values_["-pos_cnt-"]
+    str_pic_cnt = values_["-pic_cnt-"]
+    str_file = str_date + "_" + str_pos + "_" + str_kind + "_" + str_pos_cnt + "_" + str_pic_cnt + ".jpg"
+    cv2.imwrite(os.path.join(r'./_capture', str_file), img_)
+    sg.popup(str_file)
+
+    num_pic_cnt = int(str_pic_cnt)
+    num_pic_cnt += 1
+    str_pic_cnt = str(num_pic_cnt).zfill(3)
+    window_["-pic_cnt-"].update(text=str_pic_cnt)
+
+def evt_default(window_: dict[str, Any], values_: dict[str, Any], img_:Any):
+    # デフォルトの処理をここに記述
+    pass
+
+# イベントと関数のマッピング
+event_switch = {
+    "-save-": evt_save,
+}
+
 
 async def gui_loop():
 
@@ -110,22 +153,8 @@ async def gui_loop():
 
             window["-image-"].update(img)
 
-            if event == "-save-":
-                str_file = ""
-                str_date = values["-date-"].replace("/", "")
-                str_pos = values["-pos-"]
-                str_kind = values["-kind-"]
-                str_pos_cnt = values["-pos_cnt-"]
-                str_pic_cnt = values["-pic_cnt-"]
-                str_file = str_date + "_" + str_pos + "_" + str_kind + "_" + str_pos_cnt + "_" + str_pic_cnt + ".jpg"
-                cv2.imwrite(os.path.join(r'./_capture', str_file), frame_rev)
-                # cv2.imwrite(os.path.join(r'./_capture', str_file), picam2.capture_array())
-                sg.popup(str_file)
-
-                num_pic_cnt = int(str_pic_cnt)
-                num_pic_cnt += 1
-                str_pic_cnt = str(num_pic_cnt).zfill(3)
-                window["-pic_cnt-"].update(text=str_pic_cnt)
+            # イベントが辞書に存在する場合は対応する関数を呼び出し、存在しない場合はデフォルトの処理を実行
+            event_switch.get(event, evt_default)(window, values, frame_rev)
 
     finally:
         # Release resources
