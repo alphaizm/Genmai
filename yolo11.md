@@ -3,7 +3,7 @@ python -m venv .env
 
 # Yolo11
 ## ultralytics
-https://github.com/ultralytics/ultralytics
+https://github.com/ultralytics/ultralytics  
 https://docs.ultralytics.com/ja/quickstart/#install-ultralytics
 
 ```
