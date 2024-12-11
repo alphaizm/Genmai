@@ -48,7 +48,11 @@ Package : Pip
 Language : Python  
 Compute Platform : CUDA 12.4  
 ```
+1.
 pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
+
+2.
+pip install torch==2.4.0+cu124 torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu124
 ```
 
 ## YOLO11でのモデル精度検証
