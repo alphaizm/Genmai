@@ -50,3 +50,26 @@ Compute Platform : CUDA 12.4
 ```
 pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
 ```
+
+## YOLO11でのモデル精度検証
+https://docs.ultralytics.com/ja/usage/cli/#how-can-i-validate-the-accuracy-of-a-trained-yolo11-model-using-the-cli
+```
+yolo val model=yolo11n.pt data=coco8.yaml batch=1 imgsz=640
+```
+
+### エラー発生
+> NotImplementedError: Could not run 'torchvision::nms' with arguments from the 'CUDA' backend. This could be because the operator doesn't exist for this backend, or was omitted during the selective/custom build process (if using custom build). If you are a Facebook employee using PyTorch on mobile, please visit https://fburl.com/ptmfixes for possible resolutions. 'torchvision::nms' is only available for these backends: [CPU, Meta, QuantizedCPU, BackendSelect, Python, FuncTorchDynamicLayerBackMode, Functionalize, Named, Conjugate, Negative, ZeroTensor, ADInplaceOrView, AutogradOther, AutogradCPU, AutogradCUDA, AutogradXLA, AutogradMPS, AutogradXPU, AutogradHPU, AutogradLazy, AutogradMeta, Tracer, AutocastCPU, AutocastXPU, AutocastMPS, AutocastCUDA, FuncTorchBatched, BatchedNestedTensor, FuncTorchVmapMode, Batched, VmapMode, FuncTorchGradWrapper, PythonTLSSnapshot, FuncTorchDynamicLayerFrontMode, PreDispatch, PythonDispatcher].
+
+### 以下をためす
+[YOLOv8でのエラー(Could not run 'torchvision::nms' with arguments from the 'CUDA' backend.)を解決](https://qiita.com/minti36/items/71768b20fdfc36b86e34)
+
+```
+pip list
+```
+↓
+```
+torch              2.5.1+cu124
+torchaudio         2.5.1+cu124
+torchvision        0.20.1　// ★★★
+```
+
