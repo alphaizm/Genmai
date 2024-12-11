@@ -1,5 +1,7 @@
 # 環境構築
-python -m venv .env 
+```
+python -m venv .env
+```
 
 # CUDAのバージョン確認
 ```
