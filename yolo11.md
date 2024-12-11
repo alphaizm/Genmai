@@ -53,6 +53,9 @@ pip3 install torch torchvision torchaudio --index-url https://download.pytorch.o
 
 2.
 pip install torch==2.4.0+cu124 torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu124
+
+3.
+pip install torch==2.5.1+cu124 torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu124
 ```
 
 ## YOLO11でのモデル精度検証
