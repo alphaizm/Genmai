@@ -97,6 +97,7 @@ torchvision        0.20.1+cu124
 ```
 
 # 3回目の環境でモデル精度検証
+## yolo11n.pt
 ```
 (.env) D:\yolo11\.env\Scripts>yolo val model=yolo11n.pt data=coco8.yaml batch=1 imgsz=640
 Ultralytics 8.3.49 🚀 Python-3.12.4 torch-2.5.1+cu124 CUDA:0 (NVIDIA GeForce RTX 2070 with Max-Q Design, 8192MiB)
@@ -112,5 +113,23 @@ val: Scanning D:\yolo11\.env\Scripts\datasets\coco8\labels\val.cache... 4 images
           potted plant          1          1      0.825          1      0.995      0.895
 Speed: 0.0ms preprocess, 50.8ms inference, 0.0ms loss, 23.4ms postprocess per image
 Results saved to runs\detect\val3
+💡 Learn more at https://docs.ultralytics.com/modes/val
+```
+## yolo11s.pt
+```
+(.env) D:\yolo11\.env\Scripts>yolo val model=yolo11s.pt data=coco8.yaml batch=1 imgsz=640
+Ultralytics 8.3.49 🚀 Python-3.12.4 torch-2.5.1+cu124 CUDA:0 (NVIDIA GeForce RTX 2070 with Max-Q Design, 8192MiB)
+YOLO11s summary (fused): 238 layers, 9,443,760 parameters, 0 gradients, 21.5 GFLOPs
+val: Scanning D:\yolo11\.env\Scripts\datasets\coco8\labels\val.cache... 4 images, 0 backgrounds, 0 corrupt: 100%|██████
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 4/4 [00:03<0
+                   all          4         17      0.798      0.892      0.962      0.753
+                person          3         10      0.857        0.6      0.798      0.415
+                   dog          1          1      0.744          1      0.995      0.895
+                 horse          1          2      0.763          1      0.995        0.7
+              elephant          1          2          1      0.754      0.995      0.615
+              umbrella          1          1      0.688          1      0.995      0.995
+          potted plant          1          1      0.734          1      0.995      0.895
+Speed: 0.0ms preprocess, 50.8ms inference, 0.0ms loss, 31.2ms postprocess per image
+Results saved to runs\detect\val5
 💡 Learn more at https://docs.ultralytics.com/modes/val
 ```
