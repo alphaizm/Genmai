@@ -96,7 +96,7 @@ torchaudio         2.5.1+cu124
 torchvision        0.20.1+cu124
 ```
 
-# 3回目の環境でモデル検証
+# 3回目の環境でモデル精度検証
 ```
 (.env) D:\yolo11\.env\Scripts>yolo val model=yolo11n.pt data=coco8.yaml batch=1 imgsz=640
 Ultralytics 8.3.49 🚀 Python-3.12.4 torch-2.5.1+cu124 CUDA:0 (NVIDIA GeForce RTX 2070 with Max-Q Design, 8192MiB)
