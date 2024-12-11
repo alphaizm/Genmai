@@ -71,9 +71,16 @@ yolo val model=yolo11n.pt data=coco8.yaml batch=1 imgsz=640
 pip list
 ```
 ↓
+1.
 ```
 torch              2.5.1+cu124
 torchaudio         2.5.1+cu124
 torchvision        0.20.1　// ★★★
 ```
 
+2.
+```
+torch              2.4.0+cu124
+torchaudio         2.4.0+cu124
+torchvision        0.19.0+cu124
+```
